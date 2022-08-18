@@ -1,4 +1,4 @@
-// MAKE SURE YOU USE LONG LONG INT AN ALSO PRINT USING %llu to print it Otherwise
+/*// MAKE SURE YOU USE LONG LONG INT AN ALSO PRINT USING %llu to print it Otherwise
 //negative numbers will appear.
 #include"sigHandler.h"
 
@@ -36,8 +36,11 @@ int main(int argc, char* argv[]){
     }
     test = prime;
     while(1){
-        if(bool == 2)
+        //printf("TEST\n");
+        if(bool == 2) {
+            //printf("EXITING\n");
             exit(0);
+        }
     }
 }
 
@@ -92,9 +95,9 @@ void terminate(){
     printf("Process %d: my PID is %d: I completed my task and I am exiting.\n"
            "Highest prime number I found is %llu.\n",process, getpid(), prime);
     bool = 2;
-}
+}*/
 
-/*
+
 // MAKE SURE YOU USE LONG LONG INT AN ALSO PRINT USING %llu to print it Otherwise
 //negative numbers will appear.
 #include"sigHandler.h"
@@ -165,6 +168,7 @@ void checkPrimes() {
     //while(bool == 1){
         test = test + 1;
         check = 1;
+        printf("TESTING %llu\n", test);
         for( int b = 2; b < test; b++){
             if ((test % b) == 0) {
                 check = 0;
@@ -195,4 +199,3 @@ void terminate(){
            "Highest prime number I found is %llu.\n",process, getpid(), prime);
     bool = 2;
 }
-*/

@@ -1,4 +1,5 @@
 #include "sigHandler.h"
+#include <stdbool.h>
 struct itimerval timer;
 struct sigaction sa;
 int inputArray[100];
@@ -13,7 +14,7 @@ int nextProcIndex = 0;
 int count = 0;
 
 int processCount = 0;
-int currRunningProcess = -1;
+int currRunningProcess = 0;
 int currAT;
 int currBT;
 int currPID;
@@ -140,35 +141,42 @@ int initProc(int processNumber){
     }
 }
 
-//readyQueue[processCount] = processNumber
-//readyQueue[processCount + 1] = arrivalTime
-//readyQueue[processCount + 2] = burstTime
-//readyQueue[processCount + 3] = isNew
-//readyQueue[processCount + 4] = PID
+//inputArray[currRunningProcess] = ProcessNumber
+//inputArray[currRunningProcess + 1] = Burst Time
+//inputArray[currRunningProcess + 2] = PID
+//inputArray[currRunningProcess + 3] = isNew
 void contextSwitch(int clock) {
     printf("\nCONTEXT SWITCHING\n");
+    
+    if(currRunningProcess > inCounter - 2)
+        currRunningProcess = 0;
+
+    if (inputArray[currRunningProcess + 3] == NEW) {
+        inputArray[currRunningProcess + 2] = initProc(inputArray[currRunningProcess]);
+        inputArray[currRunningProcess + 3] = OLD;
+    }
+    //usleep(30000);
+    kill(inputArray[currRunningProcess + 2], sigStart);
+    
+    
+    currRunningProcess = currRunningProcess + 4;
 
 
-
+/*
     if (processCount >= (inCounter/3)*5) {
         processCount = 0;
         currRunningProcess = processCount;
         printf("LOOPED THROUGH ALL PROCESSES\n");
     }
-    if (readyQueue[currRunningProcess + 2] == 0) {
-        while (readyQueue[processCount + 2] <= 0) {
-            processCount = processCount + 5;
-            if (processCount >= (inCounter/3)*5) {
-                processCount = 0;
-                printf("ALL PROCESSES FINISHED, EXITING\n");
-                exit(0);
-            }
-        }
+
+    if (readyQueue[currRunningProcess + 2] <= 0) {
+        printf("\n\nTHE PROCESS NUMBER OF %d IS TERMINATED\n\n", readyQueue[currRunningProcess]);
     }
-        if (currRunningProcess != -1 && readyQueue[currRunningProcess + 2] != 0 && currRunningProcess != processCount) {
-            printf("SUSPENDING PROCESS %d\n", readyQueue[currRunningProcess]);
-            kill(readyQueue[currRunningProcess + 4], sigSus);
-        }
+
+    if (currRunningProcess != -1 && readyQueue[currRunningProcess + 2] != 0 && currRunningProcess != processCount) {
+        printf("SUSPENDING PROCESS %d\n", readyQueue[currRunningProcess]);
+        kill(readyQueue[currRunningProcess + 4], sigSus);
+    }
         currRunningProcess = processCount;
         if (readyQueue[currRunningProcess + 3] == NEW) {
             printf("INITING PROC %d\n", readyQueue[currRunningProcess]);
@@ -180,15 +188,24 @@ void contextSwitch(int clock) {
         printf("Scheduling to Process %d (PID %d) whose remaining time is %d\n",
                 readyQueue[currRunningProcess], readyQueue[currRunningProcess + 4], readyQueue[currRunningProcess + 2]);
 
-        usleep(3);
+        //usleep(3);
         kill(readyQueue[currRunningProcess + 4], sigStart);
-        processCount = processCount + 5; //go to next process in the ready queue
-
-   
+        processCount = processCount + 5; //go to next process in the ready queue*/
 }
 
+//inputArray[currRunningProcess] = ProcessNumber
+//inputArray[currRunningProcess + 1] = Burst Time
+//inputArray[currRunningProcess + 2] = PID
+//inputArray[currRunningProcess + 3] = isNew
 void saHandler(int signum) {
     static int clock = 0;
+
+    inputArray[currRunningProcess + 1]--;
+    if (clock % interval == 0)
+        contextSwitch(clock);
+
+    clock++;
+    /*
     int printed = 0;
 
 
@@ -216,12 +233,19 @@ void saHandler(int signum) {
     if (readyQueue[currRunningProcess + 2] == 0 && currRunningProcess != -1) {
         printf("Terminating Process %d (PID %d) whose remaining time is %d\n",
             readyQueue[currRunningProcess], readyQueue[currRunningProcess + 4], readyQueue[currRunningProcess + 2]);
+        //readyQueue[currRunningProcess] = -1;
         kill(readyQueue[currRunningProcess + 4], sigExit);
     }
         
     if (clock % interval == 0 && readyQueue[0] != -1)
         contextSwitch(clock);
-    clock++;
+    clock++;*/
+}
+
+void printInput() {
+    for (int i = 0; i < inCounter; i++) {
+        printf("%d ", inputArray[i]);
+    }
 }
 
 int main(int argc, char* argv[]) {
@@ -246,10 +270,10 @@ int main(int argc, char* argv[]) {
     while(!feof(inFile)){
         fscanf(inFile, "%d", &inputArray[inCounter]);
         fscanf(inFile, "%d", &inputArray[inCounter + 1]);
-        fscanf(inFile, "%d", &inputArray[inCounter + 2]);
-        printf("PID: %d    AT: %d    BT: %d\n",
-               inputArray[inCounter], inputArray[inCounter+1], inputArray[inCounter+2]);
-        inCounter = inCounter + 3;
+        inputArray[inCounter + 3] = NEW;
+        printf("PNUM: %d BT: %d\n",
+               inputArray[inCounter], inputArray[inCounter+1]);
+        inCounter = inCounter + 4;
     }
 
     //close input file
