@@ -15,6 +15,7 @@ int count = 0;
 
 int processCount = 0;
 int currRunningProcess = 0;
+int prevProcess = -1;
 int currAT;
 int currBT;
 int currPID;
@@ -108,16 +109,27 @@ int initProc(int processNumber){
 void contextSwitch(int clock) {
         printf("\nCONTEXT SWITCHING\n");
 
-        //if current running process reached end of array, reset back to first process in array
-        if(currRunningProcess > inCounter - 2)
-            currRunningProcess = 0;
+
 
         //initialize a new process if we havent already
         if (inputArray[currRunningProcess + 3] == NEW) {
             inputArray[currRunningProcess + 2] = initProc(inputArray[currRunningProcess]);
             inputArray[currRunningProcess + 3] = OLD;
+
         }
-    
+        
+        //suspend previous process
+        if (inputArray[prevProcess] != -1)
+            kill(inputArray[prevProcess + 2],  SIGTSTP);
+        usleep(100);
+        //continue process if it still has burst
+        if (inputArray[currRunningProcess + 1] > 0) {
+            printf("Scheduling to Process %d (PID %d) whose remaining time is %d\n",
+                inputArray[currRunningProcess], inputArray[currRunningProcess + 2], inputArray[currRunningProcess + 1]);
+            kill(inputArray[currRunningProcess + 2],  SIGCONT);
+        }
+
+        /*
         if (clock % 2 == 0)
             kill(inputArray[currRunningProcess + 2],  SIGCONT);
 
@@ -126,10 +138,15 @@ void contextSwitch(int clock) {
 
         
         if (clock % 5 == 0)
-            kill(inputArray[currRunningProcess + 2],  SIGTERM);
+            kill(inputArray[currRunningProcess + 2],  SIGTERM);*/
 
     //next current process number is 4 more in the array than the last
+    prevProcess = currRunningProcess;
     currRunningProcess = currRunningProcess + 4;
+
+    //if current running process reached end of array, reset back to first process in array
+    if(currRunningProcess > inCounter - 2)
+        currRunningProcess = 0;
 
 
 /*
@@ -168,7 +185,7 @@ void contextSwitch(int clock) {
 //inputArray[currRunningProcess + 2] = PID
 //inputArray[currRunningProcess + 3] = isNew
 void saHandler(int signum) {
-    static int clock = 0;
+    static int clock = 1;
 
     inputArray[currRunningProcess + 1]--;
     if (clock % interval == 0)

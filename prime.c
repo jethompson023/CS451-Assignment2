@@ -118,14 +118,18 @@ int check;
 
 int main(int argc, char* argv[]){
 // Set up handlers here
-    printf("STARTED %d\n", getpid());
+
+    process = atoi(argv[1]);
+    printf("Process %d: My PID is %d: I just got started!!! \n"
+            "I am starting with the number %llu to find the next prime number.\n", process, getpid(), test);
+    bool = 1;
     signal(SIGCONT, contHandler);
     signal(SIGTSTP, susHandler);
     signal(SIGTERM, exitHandler);
 
     //generate random number based on process number given
 
-    process = atoi(argv[1]);
+ 
 
     //printf("Process: %d\tPID: %d\n", process, getpid());
     for(int i = 0; i <= process; i++) {
