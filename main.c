@@ -21,116 +21,76 @@ int currPID;
 int isNew;
 
 int initProc(int processNumber){
-    int pid;
+    pid_t pid;
     switch(processNumber) {
         case 0:
-            if ((pid = fork()) < 0) {
-                printf("Fork Failed\n");
-            } else if (pid == 0) { //child
-
+            if ((pid = fork()) == 0) { //child
                 //printf("attempting to start prime.c\n");
                 char *args[] = {"./prime", "0", NULL};
                 execvp("./prime", args);
-
             }
             break;
         case 1:
-            if ((pid = fork()) < 0) {
-                printf("Fork Failed\n");
-            } else if (pid == 0) { //child
-
+            if ((pid = fork()) == 0) { //child
                 //printf("attempting to start prime.c\n");
                 char *args[] = {"./prime", "1", NULL};
                 execvp("./prime", args);
-
             }
             break;
         case 2:
-            if ((pid = fork()) < 0) {
-                printf("Fork Failed\n");
-            } else if (pid == 0) { //child
-
+            if ((pid = fork()) == 0) { //child
                 //printf("attempting to start prime.c\n");
                 char *args[] = {"./prime", "2", NULL};
                 execvp("./prime", args);
-
             }
             break;
         case 3:
-            if ((pid = fork()) < 0) {
-                printf("Fork Failed\n");
-            } else if (pid == 0) { //child
-
+            if ((pid = fork()) == 0) { //child
                 //printf("attempting to start prime.c\n");
                 char *args[] = {"./prime", "3", NULL};
                 execvp("./prime", args);
-
             }
             break;
         case 4:
-            if ((pid = fork()) < 0) {
-                printf("Fork Failed\n");
-            } else if (pid == 0) { //child
-
+            if ((pid = fork()) == 0) { //child
                 //printf("attempting to start prime.c\n");
                 char *args[] = {"./prime", "4", NULL};
                 execvp("./prime", args);
-
             }
             break;
         case 5:
-            if ((pid = fork()) < 0) {
-                printf("Fork Failed\n");
-            } else if (pid == 0) { //child
-
+            if ((pid = fork()) == 0) { //child
                 //printf("attempting to start prime.c\n");
                 char *args[] = {"./prime", "5", NULL};
                 execvp("./prime", args);
-
             }
             break;
         case 6:
-            if ((pid = fork()) < 0) {
-                printf("Fork Failed\n");
-            } else if (pid == 0) { //child
-
+            if ((pid = fork()) == 0) { //child
                 //printf("attempting to start prime.c\n");
                 char *args[] = {"./prime", "6", NULL};
                 execvp("./prime", args);
-
             }
             break;
         case 7:
-            if ((pid = fork()) < 0) {
-                printf("Fork Failed\n");
-            } else if (pid == 0) { //child
-
+            if ((pid = fork()) == 0) { //child
                 //printf("attempting to start prime.c\n");
                 char *args[] = {"./prime", "7", NULL};
                 execvp("./prime", args);
-
             }
             break;
         case 8:
-            if ((pid = fork()) < 0) {
-                printf("Fork Failed\n");
-            } else if (pid == 0) { //child
-
+            if ((pid = fork()) == 0) { //child
                 //printf("attempting to start prime.c\n");
                 char *args[] = {"./prime", "8", NULL};
                 execvp("./prime", args);
-
             }
             break;
         case 9:
-            if ((pid = fork()) < 0) {
-                printf("Fork Failed\n");
-            } else if (pid == 0) { //child
-
+            if ((pid = fork()) == 0) { //child
                 //printf("attempting to start prime.c\n");
                 char *args[] = {"./prime", "9", NULL};
                 execvp("./prime", args);
-
             }
             break;
         default:
@@ -146,19 +106,29 @@ int initProc(int processNumber){
 //inputArray[currRunningProcess + 2] = PID
 //inputArray[currRunningProcess + 3] = isNew
 void contextSwitch(int clock) {
-    printf("\nCONTEXT SWITCHING\n");
-    
-    if(currRunningProcess > inCounter - 2)
-        currRunningProcess = 0;
+        printf("\nCONTEXT SWITCHING\n");
 
-    if (inputArray[currRunningProcess + 3] == NEW) {
-        inputArray[currRunningProcess + 2] = initProc(inputArray[currRunningProcess]);
-        inputArray[currRunningProcess + 3] = OLD;
-    }
-    //usleep(30000);
-    kill(inputArray[currRunningProcess + 2], sigStart);
+        //if current running process reached end of array, reset back to first process in array
+        if(currRunningProcess > inCounter - 2)
+            currRunningProcess = 0;
+
+        //initialize a new process if we havent already
+        if (inputArray[currRunningProcess + 3] == NEW) {
+            inputArray[currRunningProcess + 2] = initProc(inputArray[currRunningProcess]);
+            inputArray[currRunningProcess + 3] = OLD;
+        }
     
-    
+        if (clock % 2 == 0)
+            kill(inputArray[currRunningProcess + 2],  SIGCONT);
+
+        if (clock % 3 == 0)
+            kill(inputArray[currRunningProcess + 2],  SIGTSTP);
+
+        
+        if (clock % 5 == 0)
+            kill(inputArray[currRunningProcess + 2],  SIGTERM);
+
+    //next current process number is 4 more in the array than the last
     currRunningProcess = currRunningProcess + 4;
 
 
@@ -295,6 +265,20 @@ int main(int argc, char* argv[]) {
     while(1) {
 
     }
+	/*char *argv[3] = {"Command-line", ".", NULL};
 
+	int pid = fork();
+
+	if ( pid == 0 ) {
+		execvp( "./prime", argv );
+	}
+
+	// Put the parent to sleep for 2 seconds--let the child finished executing 
+	wait( 2 );
+
+	printf( "Finished executing the parent process\n"
+	        " - the child won't get here--you will only see this once\n" );
+
+	return 0;*/
     return 0;
 }
