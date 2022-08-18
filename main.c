@@ -20,6 +20,8 @@ int currAT;
 int currBT;
 int currPID;
 int isNew;
+int totalTime = 0;
+int totalNumProc = 0;
 
 int initProc(int processNumber){
     pid_t pid;
@@ -107,23 +109,28 @@ int initProc(int processNumber){
 //inputArray[currRunningProcess + 2] = PID
 //inputArray[currRunningProcess + 3] = isNew
 void contextSwitch(int clock) {
-        printf("\nCONTEXT SWITCHING\n");
+        //printf("\nCONTEXT SWITCHING\n");
 
-
-
-        //initialize a new process if we havent already
+        //initialize a new process if we havent already 
         if (inputArray[currRunningProcess + 3] == NEW) {
             inputArray[currRunningProcess + 2] = initProc(inputArray[currRunningProcess]);
             inputArray[currRunningProcess + 3] = OLD;
-
         }
         
-        //suspend previous process
-        if (inputArray[prevProcess] != -1)
-            kill(inputArray[prevProcess + 2],  SIGTSTP);
-        usleep(100);
-        //continue process if it still has burst
+        //printf("TESTING PROCESS NUMBER %d with time %d\n", inputArray[currRunningProcess], inputArray[currRunningProcess + 1]);
+
+        //start process if it still has burst
         if (inputArray[currRunningProcess + 1] > 0) {
+            //process has a burst left, suspend, otherwise terminate
+            if (inputArray[prevProcess] != -1) {
+                if (inputArray[prevProcess + 1] > interval)
+                    kill(inputArray[prevProcess + 2],  SIGTSTP);
+                else {
+                    kill(inputArray[prevProcess + 2],  SIGTERM);
+                }
+            }
+            usleep(100);
+
             printf("Scheduling to Process %d (PID %d) whose remaining time is %d\n",
                 inputArray[currRunningProcess], inputArray[currRunningProcess + 2], inputArray[currRunningProcess + 1]);
             kill(inputArray[currRunningProcess + 2],  SIGCONT);
@@ -140,14 +147,18 @@ void contextSwitch(int clock) {
         if (clock % 5 == 0)
             kill(inputArray[currRunningProcess + 2],  SIGTERM);*/
 
-    //next current process number is 4 more in the array than the last
-    prevProcess = currRunningProcess;
-    currRunningProcess = currRunningProcess + 4;
+ 
+    prevProcess = currRunningProcess; //set previous process
+    do {
+        currRunningProcess = currRunningProcess + 4; //next current process number is 4 more in the array than the last
 
-    //if current running process reached end of array, reset back to first process in array
-    if(currRunningProcess > inCounter - 2)
-        currRunningProcess = 0;
+        //if current running process reached end of array, reset back to first process in array
+        if(currRunningProcess > inCounter - 2)
+            currRunningProcess = 0;
 
+    } while (inputArray[currRunningProcess + 1] == 0);
+
+    //printf("FOUND PROCESS NUMBER %d with time %d AT THE END OF CONTEXT SWITCH\n", inputArray[currRunningProcess], inputArray[currRunningProcess + 1]);
 
 /*
     if (processCount >= (inCounter/3)*5) {
@@ -185,53 +196,50 @@ void contextSwitch(int clock) {
 //inputArray[currRunningProcess + 2] = PID
 //inputArray[currRunningProcess + 3] = isNew
 void saHandler(int signum) {
-    static int clock = 1;
+    static int clock = 0;
 
-    inputArray[currRunningProcess + 1]--;
-    if (clock % interval == 0)
-        contextSwitch(clock);
-
-    clock++;
-    /*
-    int printed = 0;
-
-
-    //build the ready queue so basically a long term scheduler
-    //enables rest of process handling
-    //clock time <= arrival time and it already isnt in the ready queue, add to ready queue
-    for (int processNum = 0; processNum < inCounter; processNum = processNum + 3) {
-        if((inputArray[processNum+1] <= clock) && inputArray[processNum] != -1) {
-            readyQueue[count] = inputArray[processNum];
-            readyQueue[count + 1] = inputArray[processNum + 1];
-            readyQueue[count + 2] = inputArray[processNum + 2];
-            readyQueue[count + 3] = NEW;
-            inputArray[processNum] = -1;
-            if(printed == 0) {
-                printf("Scheduler: Time Now: %d seconds\n", clock);
-                printed = 1;
-            }
-            printf("New Process %d with remaining time of %d has arrived.\n",
-               readyQueue[count], readyQueue[count + 2]);
-            processNum = processNum + 3;
-            count = count + 5;
-        }
+    if (clock == totalTime) {
+        kill(inputArray[prevProcess + 2],  SIGTERM);
+        exit(0);
     }
-    readyQueue[currRunningProcess + 2]--;
-    if (readyQueue[currRunningProcess + 2] == 0 && currRunningProcess != -1) {
-        printf("Terminating Process %d (PID %d) whose remaining time is %d\n",
-            readyQueue[currRunningProcess], readyQueue[currRunningProcess + 4], readyQueue[currRunningProcess + 2]);
-        //readyQueue[currRunningProcess] = -1;
-        kill(readyQueue[currRunningProcess + 4], sigExit);
+    
+
+    printf("SCHEDULING TIME IS %d\n", clock);
+    //decrement burst only if the current process isnt new
+    if (inputArray[currRunningProcess + 3] != NEW)
+        inputArray[currRunningProcess + 1]--;
+    
+
+    //only context switch if time quantum is met
+    if (clock % interval == 0) {
+        int test = currRunningProcess;
+        while (inputArray[currRunningProcess + 1] == 0) {
+            currRunningProcess = currRunningProcess + 4; //next current process number is 4 more in the array than the last
+
+            //if current running process reached end of array, reset back to first process in array
+            if(currRunningProcess > inCounter - 2)
+                currRunningProcess = 0;
+        }
+        if (test != currRunningProcess)
+            inputArray[currRunningProcess + 1] = inputArray[currRunningProcess + 1] - 2;
+        contextSwitch(clock);
     }
         
-    if (clock % interval == 0 && readyQueue[0] != -1)
-        contextSwitch(clock);
-    clock++;*/
+
+    //printf("Scheduler Time is %d\n", clock);
+    clock++;
 }
 
 void printInput() {
     for (int i = 0; i < inCounter; i++) {
         printf("%d ", inputArray[i]);
+    }
+}
+
+void addAllBT() {
+    for (int i = 0; i < totalNumProc*4; i = i+4) {
+        printf("TEST NUMBER IS %d\n", inputArray[i + 1]);
+        totalTime = totalTime + inputArray[i + 1];
     }
 }
 
@@ -255,6 +263,7 @@ int main(int argc, char* argv[]) {
 
     //reading input file
     while(!feof(inFile)){
+        totalNumProc++;
         fscanf(inFile, "%d", &inputArray[inCounter]);
         fscanf(inFile, "%d", &inputArray[inCounter + 1]);
         inputArray[inCounter + 3] = NEW;
@@ -265,6 +274,9 @@ int main(int argc, char* argv[]) {
 
     //close input file
     fclose(inFile);
+
+    //add all the burst times
+    addAllBT();
 
     //starting SIGALRM handler saHandler
     //memset (&sa, 0, sizeof (sa));
@@ -282,20 +294,5 @@ int main(int argc, char* argv[]) {
     while(1) {
 
     }
-	/*char *argv[3] = {"Command-line", ".", NULL};
-
-	int pid = fork();
-
-	if ( pid == 0 ) {
-		execvp( "./prime", argv );
-	}
-
-	// Put the parent to sleep for 2 seconds--let the child finished executing 
-	wait( 2 );
-
-	printf( "Finished executing the parent process\n"
-	        " - the child won't get here--you will only see this once\n" );
-
-	return 0;*/
     return 0;
 }
