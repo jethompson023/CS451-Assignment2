@@ -20,6 +20,14 @@ int currRunningProcess = 0;
 int prevProcess = -1;
 int totalNumProc = 0;
 
+
+/*
+    Function Name: initProc
+    Input to the method: processNumber  
+    Output(Return value): pid
+    Brief description of the task:
+*/
+
 int initProc(int processNumber){
     pid_t pid;
     switch(processNumber) {
