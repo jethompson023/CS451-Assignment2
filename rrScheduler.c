@@ -4,7 +4,9 @@ Assignment Number: 2
 Date of Submission: 8/18/2022
 Name of this file: rrScheduler
 Short Description of contents:
-   This program
+   This program takes in processes via a text file and performs
+    a Round Robin scheduling algorithm to run each process for a specified time slice given
+    All processes will terminate when their burst time is 0.
 */
 
 #include <stdbool.h>
