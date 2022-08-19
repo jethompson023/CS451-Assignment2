@@ -217,24 +217,6 @@ void saHandler(int signum) {
     clock++;
 }
 
-/*
-    Function Name: contextSwitch
-    Input to the method:   
-    Output(Return value): clock 
-    
-    Brief description of the task:
-    This process we are going throguh each case and reading the process id then
-    performing a fork command to create the child process.
-*/
-
-void printInput() {
-    for (int i = 0; i < inCounter; i++) {
-        printf("%d ", inputArray[i]);
-    }
-}
-
-
-
 int main(int argc, char* argv[]) {
     interval = atoi(argv[2]);
 

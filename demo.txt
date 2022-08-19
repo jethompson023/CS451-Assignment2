@@ -1,66 +1,72 @@
-Script started on Thu 11 Nov 2021 08:10:44 PM MST
-osc@ubuntu:~/Lab2$ ./main input.txt
-input file opened
-PID: 0    AT: 1    BT: 7    init -1
-PID: 1    AT: 2    BT: 4    init -1
-PID: 2    AT: 4    BT: 6    init -1
-PID: 3    AT: 6    BT: 4    init -1
-PID: 4    AT: 7    BT: 2    init -1
-Scheduler: Time Now: 1 second
-New Process 0 with remaining time of 7 has arrived.
-Scheduling to Process 0 (PID 1410) whose remaining time is 7
-Process 0: My PID is 1410: I just got started. 
-I am starting with the number 1651675478 to find the next prime number.
-Scheduler: Time Now: 2 seconds
-New Process 1 with remaining time of 4 has arrived.
-Suspending Process 0 with remaining time of 6 seconds and
-Scheduling Process 1
-Process 0: my PID is 1410: I am about to be suspended... Highest
-prime number I found is 1651675478.
-Process 1: My PID is 1411: I just got started. 
-I am starting with the number 982789619 to find the next prime number.
-Scheduler: Time Now: 4 seconds
-New Process 2 with remaining time of 6 has arrived.
-Scheduler: Time Now: 6 seconds
-New Process 3 with remaining time of 4 has arrived.
-Terminating Process 1
-Scheduling Process 3
-Process 1: my PID is 1411: I completed my task and I am exiting.
-Highest prime number I found is 982789619.
-Process 3: My PID is 1412: I just got started. 
-I am starting with the number 1051405084 to find the next prime number.
-Scheduler: Time Now: 7 seconds
-New Process 4 with remaining time of 2 has arrived.
-Suspending Process 3 with remaining time of 3 seconds and
-Scheduling Process 4
-Process 3: my PID is 1412: I am about to be suspended... Highest
-prime number I found is 1051405084.
-Process 4: My PID is 1413: I just got started. 
-I am starting with the number 1074996829 to find the next prime number.
-Scheduler: Time Now: 9 seconds
-Terminating Process 4
-Resuming Process 3 whose remaing time is 3 seconds
-Process 4: my PID is 1413: I completed my task and I am exiting.
-Highest prime number I found is 1074996829.
-Scheduler: Time Now: 12 seconds
-Terminating Process 3
-Scheduling Process 2
-Process 3: my PID is 1412: I completed my task and I am exiting.
-Highest prime number I found is 1051405084.
-Process 2: My PID is 1414: I just got started. 
-I am starting with the number 810712927 to find the next prime number.
-Scheduler: Time Now: 18 seconds
-Terminating Process 2
-Resuming Process 0 whose remaing time is 6 seconds
-Process 2: my PID is 1414: I completed my task and I am exiting.
-Highest prime number I found is 810712927.
-Scheduler: Time Now: 24 seconds
-Terminating Process 0
-Process 0: my PID is 1410: I completed my task and I am exiting.
-Highest prime number I found is 1651675478.
-^C
-osc@ubuntu:~/Lab2$ exit script
-exit
-bash: exit: script: numeric argument required
+Input: $ ./rrScheduler input.txt 2
 
-Script done on Thu 11 Nov 2021 08:11:26 PM MST
+Output:
+
+input file opened
+PNUM: 0 BT: 7
+PNUM: 1 BT: 4
+PNUM: 2 BT: 6
+SCHEDULING TIME IS 0
+Scheduling to Process 0 (PID 11125) whose remaining time is 7
+Process 0: My PID is 11125: I just got started!!! 
+I am starting with the number 983386 to find the next prime number.
+SCHEDULING TIME IS 1
+SCHEDULING TIME IS 2
+Process 0: my PID is 11125: I am about to be suspended... Highest
+prime number I found is 985867.
+Scheduling to Process 1 (PID 11136) whose remaining time is 4
+Process 1: My PID is 11136: I just got started!!! 
+I am starting with the number 577215 to find the next prime number.
+SCHEDULING TIME IS 3
+SCHEDULING TIME IS 4
+Process 1: my PID is 11136: I am about to be suspended... Highest
+prime number I found is 581101.
+Scheduling to Process 2 (PID 11137) whose remaining time is 6
+Process 2: My PID is 11137: I just got started!!! 
+I am starting with the number 393935 to find the next prime number.
+SCHEDULING TIME IS 5
+SCHEDULING TIME IS 6
+Process 2: my PID is 11137: I am about to be suspended... Highest
+prime number I found is 399173.
+Scheduling to Process 0 (PID 11125) whose remaining time is 5
+Process 0: My PID is 11125: I just got started. 
+I am starting with the number 985871 to find the next prime number.
+SCHEDULING TIME IS 7
+SCHEDULING TIME IS 8
+Process 0: my PID is 11125: I am about to be suspended... Highest
+prime number I found is 988243.
+Scheduling to Process 1 (PID 11136) whose remaining time is 2
+Process 1: My PID is 11136: I just got started. 
+I am starting with the number 581137 to find the next prime number.
+SCHEDULING TIME IS 9
+SCHEDULING TIME IS 10
+Process 1: my PID is 11136: I completed my task and I am exiting.
+Highest prime number I found is 584971.
+Scheduling to Process 2 (PID 11137) whose remaining time is 4
+Process 2: My PID is 11137: I just got started. 
+I am starting with the number 399181 to find the next prime number.
+SCHEDULING TIME IS 11
+SCHEDULING TIME IS 12
+Process 2: my PID is 11137: I am about to be suspended... Highest
+prime number I found is 404981.
+Scheduling to Process 0 (PID 11125) whose remaining time is 3
+Process 0: My PID is 11125: I just got started. 
+I am starting with the number 988271 to find the next prime number.
+SCHEDULING TIME IS 13
+SCHEDULING TIME IS 14
+Process 0: my PID is 11125: I am about to be suspended... Highest
+prime number I found is 990707.
+Scheduling to Process 2 (PID 11137) whose remaining time is 2
+Process 2: My PID is 11137: I just got started. 
+I am starting with the number 404983 to find the next prime number.
+SCHEDULING TIME IS 15
+SCHEDULING TIME IS 16
+Process 2: my PID is 11137: I completed my task and I am exiting.
+Highest prime number I found is 410359.
+Scheduling to Process 0 (PID 11125) whose remaining time is 1
+Process 0: My PID is 11125: I just got started. 
+I am starting with the number 990719 to find the next prime number.
+SCHEDULING TIME IS 17
+SCHEDULING TIME IS 18
+Process 0: my PID is 11125: I completed my task and I am exiting.
+Highest prime number I found is 993137.
