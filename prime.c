@@ -73,21 +73,42 @@ int main(int argc, char* argv[]){
     }
 }
 
-
+/*
+    Function Name: contHandler
+    Input to the method:  
+    Output(Return value): 
+    
+    Brief description of the task:
+    This is a handler for the SIGCONT signal
+*/
 void contHandler(int signum){
     printf("Process %d: My PID is %d: I just got started. \n"
             "I am starting with the number %llu to find the next prime number.\n", process, getpid(), test);
     bool = 1;
     
 }
-
+/*
+    Function Name: susHandler
+    Input to the method:  
+    Output(Return value): 
+    
+    Brief description of the task:
+    This is a handler for the SIGTSTP signal
+*/
 void susHandler(int signum){
     bool = 0;
     printf("Process %d: my PID is %d: I am about to be suspended... Highest\n"
            "prime number I found is %llu.\n",process, getpid(), prime);
     
 }
-
+/*
+    Function Name: exitHandler
+    Input to the method:  
+    Output(Return value): 
+    
+    Brief description of the task:
+    This is a handler for the SIGTERM signal
+*/
 void exitHandler(int signum){
     bool = 2;
     printf("Process %d: my PID is %d: I completed my task and I am exiting.\n"
