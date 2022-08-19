@@ -1,5 +1,11 @@
-#include "sigHandler.h"
 #include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <signal.h>
+#include <unistd.h>
+#include <sys/time.h>
+
+
 struct itimerval timer;
 struct sigaction sa;
 int inputArray[100];

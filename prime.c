@@ -1,7 +1,12 @@
 
 // MAKE SURE YOU USE LONG LONG INT AN ALSO PRINT USING %llu to print it Otherwise
 //negative numbers will appear.
-#include"sigHandler.h"
+//#include"sigHandler.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <signal.h>
+#include <unistd.h>
+#include <sys/time.h>
 #include <signal.h>
 
 long unsigned int calculatedPrime = 123400003;
