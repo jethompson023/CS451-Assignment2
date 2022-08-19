@@ -25,7 +25,7 @@ int totalNumProc = 0;
     Function Name: initProc
     Input to the method: processNumber  
     Output(Return value): pid
-    Brief description of the task:
+    Brief description of the task: This process
 */
 
 int initProc(int processNumber){
