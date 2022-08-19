@@ -1,3 +1,12 @@
+/*
+Author: Reis Ciaramitaro & Jeremiah Thompson
+Assignment Number: 2
+Date of Submission: 8/18/2022
+Name of this file: rrScheduler
+Short Description of contents:
+   This program
+*/
+
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
