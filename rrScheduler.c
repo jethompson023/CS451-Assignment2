@@ -25,9 +25,11 @@ int totalNumProc = 0;
     Function Name: initProc
     Input to the method: processNumber  
     Output(Return value): pid
-    Brief description of the task: This process
+    
+    Brief description of the task:
+    This process we are going throguh each case and reading the process id then
+    performing a fork command to create the child process.
 */
-
 int initProc(int processNumber){
     pid_t pid;
     switch(processNumber) {
@@ -109,21 +111,23 @@ int initProc(int processNumber){
     }
 }
 
-//inputArray[currRunningProcess] = ProcessNumber
-//inputArray[currRunningProcess + 1] = Burst Time
-//inputArray[currRunningProcess + 2] = PID
-//inputArray[currRunningProcess + 3] = isNew
+/*
+    Function Name: contextSwitch
+    Input to the method: clock  
+    Output(Return value): message to the user showing the the next scheduled process along with teh remaining time
+    
+    Brief description of the task:
+    This process we are going throguh each case and reading the process id then
+    performing a fork command to create the child process.
+*/
 void contextSwitch(int clock) {
         int cycles = 0;
-        //printf("\nCONTEXT SWITCHING\n");
 
         //initialize a new process if we havent already 
         if (inputArray[currRunningProcess + 3] == NEW) {
             inputArray[currRunningProcess + 2] = initProc(inputArray[currRunningProcess]);
             inputArray[currRunningProcess + 3] = OLD;
         }
-        
-        //printf("TESTING PROCESS NUMBER %d with time %d\n", inputArray[currRunningProcess], inputArray[currRunningProcess + 1]);
 
         //start process if it still has burst
         if (inputArray[currRunningProcess + 1] > 0) {
@@ -160,10 +164,15 @@ void contextSwitch(int clock) {
     } while (inputArray[currRunningProcess + 1] == 0);
 }
 
-//inputArray[currRunningProcess] = ProcessNumber
-//inputArray[currRunningProcess + 1] = Burst Time
-//inputArray[currRunningProcess + 2] = PID
-//inputArray[currRunningProcess + 3] = isNew
+/*
+    Function Name: saHandler
+    Input to the method: signum  
+    Output(Return value): clock 
+    
+    Brief description of the task:
+    This process we are going throguh each case and reading the process id then
+    performing a fork command to create the child process.
+*/
 void saHandler(int signum) {
     static int clock = 0;
     int cycles = 0;
@@ -194,17 +203,28 @@ void saHandler(int signum) {
             inputArray[currRunningProcess + 1] = inputArray[currRunningProcess + 1] - 2;
         contextSwitch(clock);
     }
-        
 
     //printf("Scheduler Time is %d\n", clock);
     clock++;
 }
+
+/*
+    Function Name: contextSwitch
+    Input to the method:   
+    Output(Return value): clock 
+    
+    Brief description of the task:
+    This process we are going throguh each case and reading the process id then
+    performing a fork command to create the child process.
+*/
 
 void printInput() {
     for (int i = 0; i < inCounter; i++) {
         printf("%d ", inputArray[i]);
     }
 }
+
+
 
 int main(int argc, char* argv[]) {
     interval = atoi(argv[2]);
@@ -235,7 +255,6 @@ int main(int argc, char* argv[]) {
     fclose(inFile);
 
     //starting SIGALRM handler saHandler
-    //memset (&sa, 0, sizeof (sa));
     sa.sa_handler = &saHandler;
     sigaction (SIGALRM, &sa, NULL);
 
